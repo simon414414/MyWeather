@@ -33,7 +33,8 @@ class MainViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard (_:)))
         self.view.addGestureRecognizer(tapGesture)
 
-        
+        //Search by last record when app launch
+        initSearch()
     }
 
     deinit {
@@ -41,7 +42,12 @@ class MainViewController: UIViewController {
     }
     
     func initSearch()  {
-        
+        let records = SearchRecordManager.sharedInstance.getRecords()
+        if records.count > 0, let record =  records.first{
+            WeatherUtil.sharedInstance.getCurrentWeather(criteria: record) { result in
+                self.displayResponse(record: record, jsonResponse: result as! [String : Any])
+            }
+        }
     }
     
     func startSearch(input:String!) {
